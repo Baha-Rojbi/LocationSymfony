@@ -1,0 +1,46 @@
+{% extends 'baseB.html.twig' %}
+
+{% block title %}Liste des voiture de location{% endblock %}
+
+{% block body %}
+    <h1>Liste des voiture de location</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>IdVoiture</th>
+            <th>Matricule</th>
+            <th>Modele</th>
+            <th>CarteGrise</th>
+            <th>PrixJour</th>
+            <th>ImageVoiture</th>
+            <th>idClient</th>
+            <th>actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for voiture_location in voiture_locations %}
+            <tr>
+                <td>{{ voiture_location.idVoiture }}</td>
+                <td>{{ voiture_location.matricule }}</td>
+                <td>{{ voiture_location.modele }}</td>
+                <td>{{ voiture_location.carteGrise }}</td>
+                <td>{{ voiture_location.prixJour }}</td>
+                <td>{{ voiture_location.imageVoiture }}</td>
+                <td>{{ voiture_location.idClient }}</td>
+                <td>
+                    <a href="{{ path('app_voiture_location_show', {'idVoiture': voiture_location.idVoiture}) }}">show</a>
+                    <a href="{{ path('app_voiture_location_edit', {'idVoiture': voiture_location.idVoiture}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_voiture_location_new') }}">Create new</a>
+{% endblock %}
+

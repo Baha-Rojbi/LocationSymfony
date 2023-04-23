@@ -1,0 +1,27 @@
+{% extends 'baseB.html.twig' %}
+
+{% block title %}New VoitureLocation{% endblock %}
+
+{% block body %}
+    <h1>Create new VoitureLocation</h1>
+
+    {{ include('voiture_location/_form.html.twig') }}
+
+    <a href="{{ path('app_voiture_location_index') }}">back to list</a>
+    <img id="preview" src="#" alt="Preview" style="display: none;">
+    <script>
+        const imageInput = document.getElementById('voiture_location_imageVoiture');
+
+        imageInput.addEventListener('change', (event) => {
+            const selectedFile = event.target.files[0];
+            const previewImage = document.getElementById('preview');
+
+            // Set the source of the preview image to the selected file
+            previewImage.src = URL.createObjectURL(selectedFile);
+
+            // Show the preview image
+            previewImage.style.display = 'block';
+        });
+    </script>
+
+{% endblock %}

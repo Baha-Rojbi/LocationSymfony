@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Location{% endblock %}
+
+{% block body %}
+    <h1>New Location</h1>
+
+    {{ form_start(form) }}
+
+    <div class="form-group">
+        {{ form_label(form.voitureLocation) }}
+        {{ form_errors(form.voitureLocation) }}
+        {{ form_widget(form.voitureLocation, { 'attr': {'class': 'form-control', 'id': 'voiture_location'} }) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.dateDebut) }}
+        {{ form_errors(form.dateDebut) }}
+        {{ form_widget(form.dateDebut, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.dateFin) }}
+        {{ form_errors(form.dateFin) }}
+        {{ form_widget(form.dateFin, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.prixLocation) }}
+        {{ form_errors(form.prixLocation) }}
+        {{ form_widget(form.prixLocation, { 'attr': {'class': 'form-control', 'readonly': true} }) }}
+    </div>
+
+
+    <div class="form-group">
+        {{ form_label(form.idClient) }}
+        {{ form_errors(form.idClient) }}
+        {{ form_widget(form.idClient, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+
+    {{ form_end(form) }}
+
+
+    <script>
+        const voitureLocation = document.getElementById('voiture_location');
+        voitureLocation.addEventListener('change', function() {
+            const idVoiture = this.value;
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    const voiture = JSON.parse(xhr.responseText);
+                    document.getElementById('location_idVoiture').value = voiture.id;
+                    document.getElementById('location_modele').value = voiture.modele;
+                    document.getElementById('location_matricule').value = voiture.matricule;
+                }
+            };
+            xhr.open('GET', '/api/voiture/' + idVoiture);
+            xhr.send();
+        });
+    </script>
+
+{% endblock %}
