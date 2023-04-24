@@ -10,6 +10,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Image;
+
 
 
 class VoitureLocationType extends AbstractType
@@ -58,7 +60,19 @@ class VoitureLocationType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data_class' => null,
+                'constraints' => [
+                    new Image([
+                        'maxSize' => '2M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                        ],
+                        'mimeTypesMessage' => 'Please upload a valid image (JPEG, PNG or GIF)',
+                    ])
+                ]
             ])
+
             ->add('idclient', IntegerType::class, [
                 'label' => 'ID du client',
                 'constraints' => [

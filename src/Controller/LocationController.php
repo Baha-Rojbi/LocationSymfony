@@ -11,24 +11,30 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\VoitureLocation;
 
+
 #[Route('/location')]
 class LocationController extends AbstractController
 {
-    #[Route('/', name: 'app_location_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'app_location_front', methods: ['GET'])]
+    public function front(EntityManagerInterface $entityManager): Response
     {
-        $locations = $entityManager
-            ->getRepository(Location::class)
+        $voitureLocations = $entityManager
+            ->getRepository(VoitureLocation::class)
             ->findAll();
 
-        return $this->render('location/index.html.twig', [
-            'locations' => $locations,
+        return $this->render('location/front.html.twig', [
+            'voiture_locations' => $voitureLocations,
         ]);
     }
 
-    #[Route('/new', name: 'app_location_new', methods: ['GET', 'POST'])]
+
+
+    #[Route('/', name: 'app_location_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $voitureLocations = $entityManager
+            ->getRepository(VoitureLocation::class)
+            ->findAll();
         $location = new Location();
         $form = $this->createForm(LocationType::class, $location);
         $form->handleRequest($request);
@@ -61,11 +67,22 @@ class LocationController extends AbstractController
         return $this->renderForm('location/new.html.twig', [
             'location' => $location,
             'form' => $form,
+            'voiture_locations' => $voitureLocations,
         ]);
     }
 
+    #[Route('/liste', name: 'app_location_index', methods: ['GET'])]
+    public function index(EntityManagerInterface $entityManager): Response
+    {
+        $locations = $entityManager
+            ->getRepository(Location::class)
+            ->findAll();
 
-    #[Route('/{idLocation}', name: 'app_location_show', methods: ['GET'])]
+        return $this->render('location/index.html.twig', [
+            'locations' => $locations,
+        ]);
+    }
+    #[Route('/liste/{idLocation}', name: 'app_location_show', methods: ['GET'])]
     public function show(Location $location): Response
     {
         return $this->render('location/show.html.twig', [
@@ -73,7 +90,7 @@ class LocationController extends AbstractController
         ]);
     }
 
-    #[Route('/{idLocation}/edit', name: 'app_location_edit', methods: ['GET', 'POST'])]
+    #[Route('/liste/{idLocation}/edit', name: 'app_location_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Location $location, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(LocationType::class, $location);
@@ -85,13 +102,13 @@ class LocationController extends AbstractController
             return $this->redirectToRoute('app_location_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('location/edit.html.twig', [
+        return $this->renderForm('/location/edit.html.twig', [
             'location' => $location,
             'form' => $form,
         ]);
     }
 
-    #[Route('/{idLocation}', name: 'app_location_delete', methods: ['POST'])]
+    #[Route('/liste/{idLocation}', name: 'app_location_delete', methods: ['POST'])]
     public function delete(Request $request, Location $location, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$location->getIdLocation(), $request->request->get('_token'))) {

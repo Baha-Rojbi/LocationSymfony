@@ -1,11 +1,11 @@
-{% extends 'baseB.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block title %}Liste des voiture de location{% endblock %}
+{% block title %}Reservez votre voiture{% endblock %}
 
 {% block body %}
-    <h1>Liste des voiture de location</h1>
+    <h1>Reservez votre voiture</h1>
 
-    <div class="row">
+    <div class="container">
         {% for voiture_location in voiture_locations %}
             <div class="col-md-4 mb-4">
                 <article class="card">
@@ -13,16 +13,23 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ voiture_location.modele }}</h5>
                         <p class="card-text">Matricule: {{ voiture_location.matricule }}</p>
-                        <p class="card-text">Carte Grise: {{ voiture_location.carteGrise }}</p>
-                        <p class="card-text">Prix par jour: {{ voiture_location.prixJour }}€</p>
-                        <a href="{{ path('app_voiture_location_show', {'idVoiture': voiture_location.idVoiture}) }}" class="btn btn-primary">Details</a>
+                        <p class="card-text">Prix par jour: {{ voiture_location.prixJour }}DT</p>
+                        <a href="{{ path('app_location_new', {'idVoiture': voiture_location.idVoiture}) }}" class="btn btn-primary">Choisir</a>
+
                     </div>
                 </article>
             </div>
         {% else %}
             <p>no records found</p>
         {% endfor %}
+
     </div>
 
-    <a href="{{ path('app_voiture_location_new') }}" class="btn btn-success mt-4">Create new</a>
+
+
+
+
+
+
 {% endblock %}
+

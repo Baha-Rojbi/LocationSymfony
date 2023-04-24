@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+
 #[Route('/voiture/location')]
 class VoitureLocationController extends AbstractController
 {
@@ -34,9 +35,20 @@ class VoitureLocationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Check if the image_voiture field has a value
-            $imageVoitureFile = $form->get('imageVoiture')->getData();
-            if ($imageVoitureFile) {
-                $voitureLocation->setImageVoiture($imageVoitureFile);
+            $imageFile = $form->get('imageVoiture')->getData();
+            if ($imageFile) {
+                $newFilename = uniqid().'.'.$imageFile->guessExtension();
+
+                try {
+                    $imageFile->move(
+                        $this->getParameter('voiture_images_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // handle exception
+                }
+
+                $voitureLocation->setImageVoiture($newFilename);
             }
 
             $entityManager->persist($voitureLocation);

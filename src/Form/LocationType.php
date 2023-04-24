@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 
 class LocationType extends AbstractType
@@ -45,9 +46,11 @@ class LocationType extends AbstractType
                 'data' => ($builder->getData()->getVoitureLocation() ? $builder->getData()->getVoitureLocation()->getPrixJour() * abs($builder->getData()->getDateDebut()->diff($builder->getData()->getDateFin())->days) : 0),
                 'empty_data' => '',
             ])
-            ->add('idClient', null, [
-                'empty_data' => '',
+            ->add('idClient', HiddenType::class, [
+                'data' => '1',
             ]);
+
+
 
     }
 
