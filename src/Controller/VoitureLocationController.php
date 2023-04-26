@@ -9,17 +9,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Twilio\Rest\Client;
 
 
 #[Route('/voiture/location')]
 class VoitureLocationController extends AbstractController
 {
     #[Route('/', name: 'app_voiture_location_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager, Request $request): Response
     {
         $voitureLocations = $entityManager
             ->getRepository(VoitureLocation::class)
             ->findAll();
+
+
 
         return $this->render('voiture_location/index.html.twig', [
             'voiture_locations' => $voitureLocations,
@@ -54,6 +57,20 @@ class VoitureLocationController extends AbstractController
             $entityManager->persist($voitureLocation);
             $entityManager->flush();
 
+            // Send an SMS notification using Twilio
+            $twilioClient = new Client($_ENV['TWILIO_ACCOUNT_SID'], $_ENV['TWILIO_AUTH_TOKEN']);
+            $twilioPhoneNumber = $_ENV['TWILIO_PHONE_NUMBER'];
+            $recipientPhoneNumber = '+21653802106'; // Replace with the recipient's phone number
+            $message = 'A new VoitureLocation entity has been added!'; // Customize your message here
+            $twilioClient->messages->create(
+                $recipientPhoneNumber,
+                [
+                    'from' => $twilioPhoneNumber,
+                    'body' => $message,
+                ]
+            );
+
+            // Redirect the user to the index page
             return $this->redirectToRoute('app_voiture_location_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -105,4 +122,5 @@ class VoitureLocationController extends AbstractController
 
         return $this->redirectToRoute('app_voiture_location_index', [], Response::HTTP_SEE_OTHER);
     }
+
 }

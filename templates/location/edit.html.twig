@@ -3,11 +3,15 @@
 {% block title %}Edit Location{% endblock %}
 
 {% block body %}
-    <h1>Edit Location</h1>
+    <center>
+    <h1>Edit your Reservation</h1>
+    </center>
 
     {{ include('location/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('app_location_index') }}">back to list</a>
+
 
     {{ include('location/_delete_form.html.twig') }}
+
+    <a href="{{ path('app_location_index') }}">back to reservations</a>
 {% endblock %}

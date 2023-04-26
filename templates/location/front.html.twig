@@ -6,6 +6,7 @@
     <h1>Reservez votre voiture</h1>
 
     <div class="container">
+        {% if voiture_locations|length > 0 %}
         {% for voiture_location in voiture_locations %}
             <div class="col-md-4 mb-4">
                 <article class="card">
@@ -19,9 +20,11 @@
                     </div>
                 </article>
             </div>
-        {% else %}
-            <p>no records found</p>
         {% endfor %}
+            {{ knp_pagination_render(voiture_locations) }}
+        {% else %}
+            <p>No records found</p>
+        {% endif %}
 
     </div>
 

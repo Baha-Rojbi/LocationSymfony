@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Image;
+use Symfony\Component\Validator\Constraints\Positive;
 
 
 
@@ -52,6 +53,9 @@ class VoitureLocationType extends AbstractType
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Prix par jour field should not be empty'
+                    ]),
+                    new Positive([
+                        'message' => 'Prix par jour should be positive'
                     ])
                 ]
             ])

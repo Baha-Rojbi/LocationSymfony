@@ -102,15 +102,18 @@
     <div class="container">
 
             <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
-                <h1 class="display-6 mb-4" >Book your rental
+                <h1  class="display-6 mb-4" >Book your rental
                 </h1>
             </div>
             <div class="row g-4 justify-content-center">
-                <div class="row">
+                <div  class="row">
+
+                    {% if voiture_locations|length > 0 %}
+                        {{ knp_pagination_render(voiture_locations) }}
                     {% for voiture_location in voiture_locations %}
-                        <div class="col-lg-4 col-md-6">
-                            <div class="card-body">
-                                <article class="courses-item d-flex flex-column bg-white overflow-hidden h-100">
+                        <div  class="col-lg-4 col-md-6">
+                            <div  class="card-body">
+                                <article  class="courses-item d-flex flex-column bg-white overflow-hidden h-100">
                                     <div class="text-center p-4 pt-0">
                                         <p class="d-inline-block bg-primary text-white fs-5 py-1 px-4 mb-4">Price:{{ voiture_location.prixJour }}DT/Day</p>
                                         <h5 class="mb-3">{{ voiture_location.modele }}</h5>
@@ -122,49 +125,61 @@
                                     <div class="position-relative mt-auto">
                                         <img src="{{ asset('uploads/voiture_images/' ~ voiture_location.imageVoiture) }}" alt="Image de la voiture" class="img-fluid">
                                         <div class="courses-overlay">
-                                            <a href="{{ path('app_location_new', {'idVoiture': voiture_location.idVoiture}) }}" class="btn btn-outline-primary border-2">Select</a>
+                                            <button id="select"  class="btn btn-outline-primary border-2" onclick="scrollToFormu()">Select</button >
                                         </div>
                                     </div>
                                 </article>
                             </div>
                         </div>
-                    {% else %}
-                        <p>no records found</p>
                     {% endfor %}
+                    {% else %}
+                        <p>No records found</p>
+                    {% endif %}
                 </div>
 
-                <div class="row g-4 justify-content-center">
+
+                <div id="formu" class="row g-4 justify-content-center">
                     <div class="col-lg-8 my-6 mb-0 wow fadeInUp" data-wow-delay="0.1s">
                         <div class="bg-primary text-center p-5">
-                            <h1 class="mb-4">Book your rental
+                            <h1  class="mb-4">Book your rental
                             </h1>
 
                             {{ form_start(form) }}
                             <div class="row g-3">
+<center>
+                                <div class="col-sm-6">
+                                    {{ form_label(form.voitureLocation, 'Voiture Location') }}
+                                    {{ form_errors(form.voitureLocation) }}
+                                    {{ form_widget(form.voitureLocation, { 'attr': {'class': 'form-control', 'id': 'voitureLocation'} }) }}
+                                </div>
+</center>
 
+<div>
 
+</div>
 
                                 <div class="col-sm-6">
 
                                     {{ form_label(form.dateDebut) }}
                                     {{ form_errors(form.dateDebut) }}
-                                    {{ form_widget(form.dateDebut, { 'attr': {'class': 'form-control'} }) }}
+                                    {{ form_widget(form.dateDebut, { 'attr': {'class': 'form-control', 'id': 'dateDebut'} }) }}
                                 </div>
 
                                 <div class="col-sm-6">
                                     {{ form_label(form.dateFin) }}
                                     {{ form_errors(form.dateFin) }}
-                                    {{ form_widget(form.dateFin, { 'attr': {'class': 'form-control'} }) }}
+                                    {{ form_widget(form.dateFin, { 'attr': {'class': 'form-control', 'id': 'dateFin'} }) }}
                                 </div>
 
+
+
+
+                                <button  type="submit" class="btn btn-dark w-100 py-3">Confirm</button>
                                 <div class="col-sm-6">
-                                    {{ form_label(form.prixLocation) }}
+                                    {{ form_label(form.prixLocation, 'Prix Location') }}
                                     {{ form_errors(form.prixLocation) }}
-                                    {{ form_widget(form.prixLocation, { 'attr': {'class': 'form-control', 'readonly': true} }) }}
+                                    {{ form_widget(form.prixLocation, { 'attr': {'class': 'form-control', 'readonly': true, 'id': 'prixLocation'} }) }}
                                 </div>
-
-
-                                <button type="submit" class="btn btn-dark w-100 py-3">Confirm</button>
                             </div>
 
                             {{ form_end(form) }}
@@ -181,27 +196,12 @@
 
 
     <script>
-        const dateDebut = document.getElementById('location_dateDebut');
-        const dateFin = document.getElementById('location_dateFin');
-        const prixLocation = document.getElementById('location_prixLocation');
-        const voiturePrix = document.getElementById('voiture_location').value;
+        /////////////////
+        function scrollToFormu() {
+            var formuDiv = document.getElementById("formu");
+            formuDiv.scrollIntoView({ behavior: "smooth" });
+        }
 
-        // Calculate the initial price based on the current dates
-        const days = Math.ceil(Math.abs(new Date(dateFin.value) - new Date(dateDebut.value)) / (1000 * 60 * 60 * 24));
-        const initialPrixLocation = voiturePrix * days;
-        prixLocation.value = initialPrixLocation;
-
-        // Attach event listeners to dateDebut and dateFin fields
-        [dateDebut, dateFin].forEach(function(field) {
-            field.addEventListener('change', function() {
-                // Calculate new value of prixLocation
-                const days = Math.ceil(Math.abs(new Date(dateFin.value) - new Date(dateDebut.value)) / (1000 * 60 * 60 * 24));
-                const newPrixLocation = voiturePrix * days;
-
-                // Update DOM with new value of prixLocation
-                prixLocation.value = newPrixLocation;
-            });
-        });
     </script>
 
     <!-- Team Start -->

@@ -10,31 +10,46 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\VoitureLocation;
+use Knp\Component\Pager\PaginatorInterface;
+use Twilio\Rest\Client;
 
 
 #[Route('/location')]
 class LocationController extends AbstractController
 {
     #[Route('/new', name: 'app_location_front', methods: ['GET'])]
-    public function front(EntityManagerInterface $entityManager): Response
+    public function front(Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
     {
         $voitureLocations = $entityManager
             ->getRepository(VoitureLocation::class)
             ->findAll();
 
+        $pagination = $paginator->paginate(
+            $voitureLocations,
+            $request->query->getInt('page', 1),
+            3
+        );
+
         return $this->render('location/front.html.twig', [
-            'voiture_locations' => $voitureLocations,
+            'voiture_locations' => $pagination,
         ]);
     }
 
 
 
+
     #[Route('/', name: 'app_location_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
     {
         $voitureLocations = $entityManager
             ->getRepository(VoitureLocation::class)
             ->findAll();
+
+        $pagination = $paginator->paginate(
+            $voitureLocations,
+            $request->query->getInt('page', 1),
+            3
+        );
         $location = new Location();
         $form = $this->createForm(LocationType::class, $location);
         $form->handleRequest($request);
@@ -61,13 +76,27 @@ class LocationController extends AbstractController
             $entityManager->persist($location);
             $entityManager->flush();
 
+            // Send an SMS notification using Twilio
+            $twilioClient = new Client($_ENV['TWILIO_ACCOUNT_SID'], $_ENV['TWILIO_AUTH_TOKEN']);
+            $twilioPhoneNumber = $_ENV['TWILIO_PHONE_NUMBER'];
+            $recipientPhoneNumber = '+21653802106'; // Replace with the recipient's phone number
+            $message = 'Your rental car is confirmed!'; // Customize your message here
+            $twilioClient->messages->create(
+                $recipientPhoneNumber,
+                [
+                    'from' => $twilioPhoneNumber,
+                    'body' => $message,
+                ]
+            );
+
             return $this->redirectToRoute('app_location_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('location/new.html.twig', [
+            'voiture_locations' => $pagination,
             'location' => $location,
             'form' => $form,
-            'voiture_locations' => $voitureLocations,
+
         ]);
     }
 
@@ -99,6 +128,18 @@ class LocationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+// Send an SMS notification using Twilio
+            $twilioClient = new Client($_ENV['TWILIO_ACCOUNT_SID'], $_ENV['TWILIO_AUTH_TOKEN']);
+            $twilioPhoneNumber = $_ENV['TWILIO_PHONE_NUMBER'];
+            $recipientPhoneNumber = '+21653802106'; // Replace with the recipient's phone number
+            $message = 'Rental modified successfuly!'; // Customize your message here
+            $twilioClient->messages->create(
+                $recipientPhoneNumber,
+                [
+                    'from' => $twilioPhoneNumber,
+                    'body' => $message,
+                ]
+            );
             return $this->redirectToRoute('app_location_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -114,8 +155,21 @@ class LocationController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$location->getIdLocation(), $request->request->get('_token'))) {
             $entityManager->remove($location);
             $entityManager->flush();
+            // Send an SMS notification using Twilio
+            $twilioClient = new Client($_ENV['TWILIO_ACCOUNT_SID'], $_ENV['TWILIO_AUTH_TOKEN']);
+            $twilioPhoneNumber = $_ENV['TWILIO_PHONE_NUMBER'];
+            $recipientPhoneNumber = '+21653802106'; // Replace with the recipient's phone number
+            $message = 'You have canceled your reservation!'; // Customize your message here
+            $twilioClient->messages->create(
+                $recipientPhoneNumber,
+                [
+                    'from' => $twilioPhoneNumber,
+                    'body' => $message,
+                ]
+            );
         }
 
         return $this->redirectToRoute('app_location_index', [], Response::HTTP_SEE_OTHER);
     }
+
 }

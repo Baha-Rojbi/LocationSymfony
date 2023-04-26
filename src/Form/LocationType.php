@@ -41,7 +41,7 @@ class LocationType extends AbstractType
                 'widget' => 'single_text',
                 'empty_data' => '',
             ])
-            ->add('prixLocation', null, [
+            ->add('prixLocation', HiddenType::class, [
                 'mapped' => false,
                 'data' => ($builder->getData()->getVoitureLocation() ? $builder->getData()->getVoitureLocation()->getPrixJour() * abs($builder->getData()->getDateDebut()->diff($builder->getData()->getDateFin())->days) : 0),
                 'empty_data' => '',

@@ -3,29 +3,38 @@
 {% block title %}Liste de locations{% endblock %}
 
 {% block body %}
-    <h1>Liste des locations</h1>
+    <center>
+    <h1>Your reservations</h1>
+    </center>
 
+    <div class="container">
     <table class="table">
         <thead>
         <tr>
-            <th>ImageVoiture</th>
-            <th>DateDebut</th>
-            <th>DateFin</th>
-            <th>PrixLocation</th>
+            <th>Car image</th>
+            <th>Model</th>
+            <th>Starting date</th>
+            <th>Ending date</th>
+            <th>Price</th>
             <th>Matricule</th>
-            <th>Modele</th>
+
             <th>actions</th>
         </tr>
         </thead>
         <tbody>
         {% for location in locations %}
             <tr>
-                <td>{{ location.imageVoiture }}</td>
+                <td>{% if location.imageVoiture %}
+                        <img src="{{ asset('uploads/voiture_images/' ~ location.imageVoiture) }}" alt="Image de la voiture" class="card-img-top" style="max-width: 200px;">
+                    {% else %}
+                        No image available.
+                    {% endif %}</td>
+                <td>{{ location.modele }}</td>
                 <td>{{ location.dateDebut ? location.dateDebut|date('Y-m-d') : '' }}</td>
                 <td>{{ location.dateFin ? location.dateFin|date('Y-m-d') : '' }}</td>
-                <td>{{ location.prixLocation }}</td>
+                <td>{{ location.prixLocation }} DT</td>
                 <td>{{ location.matricule }}</td>
-                <td>{{ location.modele }}</td>
+
                 <td>
                     <a href="{{ path('app_location_show', {'idLocation': location.idLocation}) }}">show</a>
                     <a href="{{ path('app_location_edit', {'idLocation': location.idLocation}) }}">edit</a>
@@ -38,6 +47,11 @@
         {% endfor %}
         </tbody>
     </table>
+        <a class="btn btn-dark w-100 py-3" href="{{ path('app_location_new') }}">Create a new reservation</a>
+    </div>
 
-    <a href="{{ path('app_location_new') }}">Create new</a>
+
+
+
+
 {% endblock %}
